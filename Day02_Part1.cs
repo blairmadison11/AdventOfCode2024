@@ -1,18 +1,9 @@
-var total = 0;
-foreach (string line in File.ReadAllLines("input.txt"))
+var isOrdered = (int[] nums) =>
 {
-    var nums = line.Split(' ').Select(x => int.Parse(x)).ToArray();
-    var safe = true;
-    var increasing = nums[1] > nums[0];
-    for (int i = 0; i < nums.Length - 1; ++i)
-    {
-        var diff = increasing ? nums[i + 1] - nums[i] : nums[i] - nums[i + 1];
-        if (diff < 1 || diff > 3)
-        {
-            safe = false;
-            break;
-        }
-    }
-    total += safe ? 1 : 0;
-}
-Console.WriteLine(total);
+    var pairs = nums.Zip(nums.Skip(1));
+    return pairs.All(x => x.First > x.Second) ||
+        pairs.All(x => x.First < x.Second);
+};
+var isSmallDiff = (int[] nums) => nums.Zip(nums.Skip(1)).All(x => Math.Abs(x.First - x.Second) is >= 1 and <= 3);
+var lists = File.ReadAllLines("input.txt").Select(l => l.Split(' ').Select(int.Parse).ToArray()).ToArray();
+Console.WriteLine(lists.Aggregate(0, (a, c) => a + (isOrdered(c) && isSmallDiff(c) ? 1 : 0)));
