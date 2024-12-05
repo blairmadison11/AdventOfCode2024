@@ -11,15 +11,7 @@ for (++i; i < lines.Length; ++i)
 {
     updates.Add(new Update(lines[i].Split(',').Select(int.Parse).ToArray()));
 }
-var sum = 0;
-foreach (var update in updates)
-{
-    if (update.IsOrdered)
-    {
-        sum += update.MiddlePage;
-    }
-}
-Console.WriteLine(sum);
+Console.WriteLine(updates.Aggregate(0, (a, c) => a + (c.IsOrdered ? c.MiddlePage : 0)));
 
 
 /// *******
