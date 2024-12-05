@@ -5,8 +5,7 @@ var updates = new List<Update>();
 int i = 0;
 for (; lines[i] != ""; ++i)
 {
-    var rule = lines[i].Split('|').Select(int.Parse).ToArray();
-    rulebook.AddRule(new Rule(rule[0], rule[1]));
+    rulebook.AddRule(lines[i].Split('|').Select(int.Parse).ToArray());
 }
 for (++i; i < lines.Length; ++i)
 {
@@ -23,6 +22,10 @@ foreach (var update in updates)
 }
 Console.WriteLine(sum);
 
+
+/// *******
+/// Classes
+/// *******
 class Rule
 {
     public int First { get; }
@@ -55,23 +58,19 @@ class Rulebook
         return null;
     }
 
-    public void AddRule(Rule rule)
+    public void AddRule(int[] nums)
     {
-        if (!myRules.ContainsKey(rule.First))
+        var rule = new Rule(nums[0], nums[1]);
+        foreach (int num in nums)
         {
-            myRules.Add(rule.First, new List<Rule>() { rule });
-        }
-        else
-        {
-            myRules[rule.First].Add(rule);
-        }
-        if (!myRules.ContainsKey(rule.Last))
-        {
-            myRules.Add(rule.Last, new List<Rule>() { rule });
-        }
-        else
-        {
-            myRules[rule.Last].Add(rule);
+            if (!myRules.ContainsKey(num))
+            {
+                myRules.Add(num, new List<Rule>() { rule });
+            }
+            else
+            {
+                myRules[num].Add(rule);
+            }
         }
     }
 }
