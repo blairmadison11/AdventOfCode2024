@@ -1,52 +1,122 @@
 var lines = File.ReadAllLines("input.txt");
-var rulebook = new Dictionary<int, List<(int First, int Last)>>();
-var updates = new List<Dictionary<int, int>>();
+var rulebook = new Rulebook();
+Page.Rules = rulebook;
+var updates = new List<Update>();
 int i = 0;
 for (; lines[i] != ""; ++i)
 {
-    var rule = lines[i].Split('|').Select(int.Parse).ToArray();
-    var ruleTup = (rule[0], rule[1]);
-    foreach (var num in rule)
-    {
-        if (!rulebook.ContainsKey(num))
-        {
-            rulebook.Add(num, new List<(int First, int Last)>() { ruleTup });
-        }
-        else
-        {
-            rulebook[num].Add(ruleTup);
-        }
-    }
+    rulebook.AddRule(lines[i].Split('|').Select(int.Parse).ToArray());
 }
 for (++i; i < lines.Length; ++i)
 {
-    updates.Add(lines[i].Split(',').Select((x, i) => new { Val = int.Parse(x), Index = i }).ToDictionary(e => e.Val, e => e.Index));
+    updates.Add(new Update(lines[i].Split(',').Select(int.Parse).ToArray()));
 }
 var sum = 0;
 foreach (var update in updates)
 {
-    var fail = false;
-    var nums = update.Keys.ToArray();
-    for (i = 0; !fail && i < nums.Length; ++i)
+    if (update.IsOrdered)
     {
-        for (int j = i; !fail && j < nums.Length; ++j)
-        {
-            var rules1 = rulebook[nums[i]];
-            var rules2 = rulebook[nums[j]];
-            if (rules1 != null && rules2 != null)
-            {
-                var rulesInt = rules1.Intersect(rules2);
-                if (rulesInt.Count() == 1)
-                {
-                    var rule = rulesInt.First();
-                    fail = update[rule.First] > update[rule.Last];
-                }
-            }
-        }
-    }
-    if (!fail)
-    {
-        sum += update.First(x => x.Value == (update.Count / 2)).Key;
+        sum += update.MiddlePage;
     }
 }
 Console.WriteLine(sum);
+
+
+/// *******
+/// Classes
+/// *******
+class Rule
+{
+    public int First { get; }
+    public int Last { get; }
+
+    public Rule(int first, int last)
+    {
+        First = first;
+        Last = last;
+    }
+}
+
+class Rulebook
+{
+    private Dictionary<int, List<Rule>> myRules = new Dictionary<int, List<Rule>>();
+    
+    public Rule GetRule(int num1, int num2)
+    {
+        var rules1 = myRules[num1];
+        var rules2 = myRules[num2];
+        if (rules1 != null && rules2 != null)
+        {
+            var rulesInt = rules1.Intersect(rules2);
+            if (rulesInt.Count() == 1)
+            {
+                var rule = rulesInt.First();
+                return rule;
+            }
+        }
+        return null;
+    }
+
+    public void AddRule(int[] nums)
+    {
+        var rule = new Rule(nums[0], nums[1]);
+        foreach (int num in nums)
+        {
+            if (!myRules.ContainsKey(num))
+            {
+                myRules.Add(num, new List<Rule>() { rule });
+            }
+            else
+            {
+                myRules[num].Add(rule);
+            }
+        }
+    }
+}
+
+class Page : IComparable<Page>
+{
+    public int Number { get; }
+    public static Rulebook Rules;
+
+    public Page(int number)
+    {
+        this.Number = number;
+    }
+
+    public int CompareTo(Page? other)
+    {
+        Rule rule = Rules.GetRule(this.Number, other.Number);
+        if (rule == null) return 0;
+        if (this.Number == rule.First) return -1;
+        return 1;
+    }
+}
+
+class Update
+{
+    private List<Page> myPages;
+    public int MiddlePage => myPages[myPages.Count / 2].Number;
+    public bool IsOrdered
+    {
+        get
+        {
+            for (int i = 0; i < myPages.Count - 1; ++i)
+            {
+                for (int j = i + 1; j < myPages.Count; ++j)
+                {
+                    if (myPages[i].CompareTo(myPages[j]) > 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    public Update(int[] nums)
+    {
+        myPages = nums.Select(i => new Page(i)).ToList();
+    }
+}
