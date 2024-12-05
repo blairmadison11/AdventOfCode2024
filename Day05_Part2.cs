@@ -119,7 +119,6 @@ class Update
     public Update(int[] nums)
     {
         myPages = nums.Select(i => new Page(i)).ToList();
-
     }
 
     public void Sort()
