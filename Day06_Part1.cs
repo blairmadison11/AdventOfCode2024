@@ -8,18 +8,6 @@ var next = pos;
 var dir = dirs[map[y][x]];
 var done = false;
 var count = 0;
-var printMap = (char[][] m) =>
-{
-    for (int i = 0; i < m.Length; ++i)
-    {
-        for (int j = 0; j < m[i].Length; ++j)
-        {
-            Console.Write(m[i][j]);
-        }
-        Console.WriteLine();
-    }
-};
-
 while (!done)
 {
     next = (pos.x + dirVecs[dir].Item1, pos.y + dirVecs[dir].Item2);
