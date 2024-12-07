@@ -9,25 +9,20 @@ for (int i = 0; i < lines.Length; ++i)
         nodeGrid[i, j] = node;
         if (i > 0) node.AddAdjacent(Cardinal.North, nodeGrid[i - 1, j]);
         if (j > 0) node.AddAdjacent(Cardinal.West, nodeGrid[i, j - 1]);
-        if (lines[i][j] == '.')
-        {
-            node.Type = NodeType.Path;
-        }
-        else if (lines[i][j] == '#')
+        if (lines[i][j] == '#')
         {
             node.Type = NodeType.Obstacle;
         }
-        else
+        else if (lines[i][j] != '.')
         {
-            node.Type = NodeType.Path;
-            node.SetDirection(lines[i][j]);
+            node.SetStartDir(lines[i][j]);
             cur = node;
         }
     }
 }
 
-var visitedNodes = new HashSet<Node>();
 var start = cur;
+var visitedNodes = new HashSet<Node>();
 while (cur != null)
 {
     visitedNodes.Add(cur);
@@ -35,6 +30,7 @@ while (cur != null)
 }
 
 var count = 0;
+visitedNodes.Remove(start);
 foreach (var node in visitedNodes)
 {
     node.Type = NodeType.Obstacle;
@@ -56,7 +52,7 @@ class Node
     static private Dictionary<char, Cardinal> CharDir = new Dictionary<char, Cardinal> { { '^', Cardinal.North },
         { '>', Cardinal.East }, { 'v', Cardinal.South}, { '<', Cardinal.West } };
 
-    public NodeType Type;
+    public NodeType Type = NodeType.Path;
     public Cardinal Direction = Cardinal.None;
 
     private Cardinal startDir = Cardinal.None;
@@ -93,7 +89,7 @@ class Node
         node.adjacent[OppDir[direction]] = this;
     }
 
-    public void SetDirection(char c)
+    public void SetStartDir(char c)
     {
         Direction = CharDir[c];
         startDir = Direction;
