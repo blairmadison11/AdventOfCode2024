@@ -1,6 +1,6 @@
 var lines = File.ReadAllLines("input.txt");
 var nodeGrid = new Node[lines.Length, lines[0].Length];
-Node? cur  = null;
+Node? cur = null;
 for (int i = 0; i < lines.Length; ++i)
 {
     for (int j = 0; j < lines[i].Length; ++j)
@@ -61,13 +61,12 @@ class Node
 
     public bool IsObstacle => Type == NodeType.Obstacle;
     public bool IsLoop
-    { 
+    {
         get
         {
             if (startDir != Cardinal.None) Direction = startDir;
             var isLoop = false;
             var prev = new HashSet<(Node, Cardinal)>();
-            var done = false;
             var cur = this;
             while (cur != null)
             {
