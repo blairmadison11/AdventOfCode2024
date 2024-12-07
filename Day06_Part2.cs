@@ -57,7 +57,6 @@ class Node
 
     private Cardinal startDir = Cardinal.None;
     private Dictionary<Cardinal, Node> adjacent = new Dictionary<Cardinal, Node>();
-    private bool visited = false, obstacle = false;
 
     public bool IsObstacle => Type == NodeType.Obstacle;
     public bool IsLoop
@@ -96,13 +95,12 @@ class Node
 
     public Node? GetNext()
     {
-        Node? next = null;
-        var done = false;
-        while (!done)
+        Node? next = this;
+        while (next == this)
         {
             if (!adjacent.ContainsKey(Direction))
             {
-                done = true;
+                next = null;
             }
             else if (adjacent[Direction].IsObstacle)
             {
@@ -110,7 +108,6 @@ class Node
             }
             else
             {
-                done = true;
                 next = adjacent[Direction];
                 next.Direction = Direction;
             }
