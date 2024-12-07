@@ -45,11 +45,11 @@ enum Cardinal { None, North, South, East, West };
 enum NodeType { Path, Obstacle };
 class Node
 {
-    static private Dictionary<Cardinal, Cardinal> OppDir = new Dictionary<Cardinal, Cardinal>() { { Cardinal.North, Cardinal.South },
+    static private readonly Dictionary<Cardinal, Cardinal> Opposite = new Dictionary<Cardinal, Cardinal>() { { Cardinal.North, Cardinal.South },
         { Cardinal.South, Cardinal.North }, { Cardinal.East, Cardinal.West }, { Cardinal.West, Cardinal.East } };
-    static private Dictionary<Cardinal, Cardinal> RightTurnDir = new Dictionary<Cardinal, Cardinal>() { { Cardinal.North, Cardinal.East },
+    static private readonly Dictionary<Cardinal, Cardinal> RightTurn = new Dictionary<Cardinal, Cardinal>() { { Cardinal.North, Cardinal.East },
         { Cardinal.East, Cardinal.South }, { Cardinal.South, Cardinal.West }, { Cardinal.West, Cardinal.North } };
-    static private Dictionary<char, Cardinal> CharDir = new Dictionary<char, Cardinal> { { '^', Cardinal.North },
+    static private readonly Dictionary<char, Cardinal> CharDir = new Dictionary<char, Cardinal> { { '^', Cardinal.North },
         { '>', Cardinal.East }, { 'v', Cardinal.South}, { '<', Cardinal.West } };
 
     public NodeType Type = NodeType.Path;
@@ -84,7 +84,7 @@ class Node
     public void AddAdjacent(Cardinal direction, Node node)
     {
         adjacent[direction] = node;
-        node.adjacent[OppDir[direction]] = this;
+        node.adjacent[Opposite[direction]] = this;
     }
 
     public void SetStartDir(char c)
@@ -104,7 +104,7 @@ class Node
             }
             else if (adjacent[Direction].IsObstacle)
             {
-                Direction = RightTurnDir[Direction];
+                Direction = RightTurn[Direction];
             }
             else
             {
