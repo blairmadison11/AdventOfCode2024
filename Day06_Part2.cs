@@ -37,7 +37,6 @@ foreach (var node in visitedNodes)
     if (start.IsLoop) ++count;
     node.Type = NodeType.Path;
 }
-
 Console.WriteLine(count);
 
 // *** Classes ***
