@@ -53,9 +53,8 @@ class Node
         { '>', Cardinal.East }, { 'v', Cardinal.South}, { '<', Cardinal.West } };
 
     public NodeType Type = NodeType.Path;
-    public Cardinal Direction = Cardinal.None;
 
-    private Cardinal startDir = Cardinal.None;
+    private Cardinal dir = Cardinal.None, startDir = Cardinal.None;
     private Dictionary<Cardinal, Node> adjacent = new Dictionary<Cardinal, Node>();
 
     public bool IsObstacle => Type == NodeType.Obstacle;
@@ -63,15 +62,15 @@ class Node
     {
         get
         {
-            if (startDir != Cardinal.None) Direction = startDir;
+            dir = startDir;
             var isLoop = false;
             var prev = new HashSet<(Node, Cardinal)>();
             var cur = this;
             while (cur != null)
             {
-                prev.Add((cur, cur.Direction));
+                prev.Add((cur, cur.dir));
                 cur = cur.GetNext();
-                if (cur != null && prev.Contains((cur, cur.Direction)))
+                if (cur != null && prev.Contains((cur, cur.dir)))
                 {
                     isLoop = true;
                     cur = null;
@@ -89,8 +88,8 @@ class Node
 
     public void SetStartDir(char c)
     {
-        Direction = CharDir[c];
-        startDir = Direction;
+        dir = CharDir[c];
+        startDir = dir;
     }
 
     public Node? GetNext()
@@ -98,18 +97,18 @@ class Node
         Node? next = this;
         while (next == this)
         {
-            if (!adjacent.ContainsKey(Direction))
+            if (!adjacent.ContainsKey(dir))
             {
                 next = null;
             }
-            else if (adjacent[Direction].IsObstacle)
+            else if (adjacent[dir].IsObstacle)
             {
-                Direction = RightTurn[Direction];
+                dir = RightTurn[dir];
             }
             else
             {
-                next = adjacent[Direction];
-                next.Direction = Direction;
+                next = adjacent[dir];
+                next.dir = dir;
             }
         }
         return next;
