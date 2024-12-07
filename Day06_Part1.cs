@@ -5,27 +5,23 @@ for (int i = 0; i < lines.Length; ++i)
 {
     for (int j = 0; j < lines[i].Length; ++j)
     {
-        Node node = new Node(j, i);
+        Node node = new Node();
         nodeGrid[i, j] = node;
-        if (i > 0) node.AddAdjacent(Direction.North, nodeGrid[i - 1, j]);
-        if (j > 0) node.AddAdjacent(Direction.West, nodeGrid[i, j - 1]);
-        if (lines[i][j] == '.')
+        if (i > 0) node.AddAdjacent(Cardinal.North, nodeGrid[i - 1, j]);
+        if (j > 0) node.AddAdjacent(Cardinal.West, nodeGrid[i, j - 1]);
+        if (lines[i][j] == '#')
         {
-            node.Type = NodeType.Path;
+            node.Type = NodeType.Obstacle;
         }
-        else if (lines[i][j] == '#')
+        else if (lines[i][j] != '.')
         {
-            node.Type |= NodeType.Obstacle;
-        }
-        else
-        {
-            node.Type = NodeType.Path;
-            node.SetDirection(lines[i][j]);
+            node.SetStartDir(lines[i][j]);
             cur = node;
         }
     }
 }
 
+var start = cur;
 var visitedNodes = new HashSet<Node>();
 while (cur != null)
 {
@@ -35,41 +31,36 @@ while (cur != null)
 Console.WriteLine(visitedNodes.Count);
 
 // *** Classes ***
-enum Direction { None, North, South, East, West };
+enum Cardinal { None, North, South, East, West };
 enum NodeType { Path, Obstacle };
 class Node
 {
-    static private Dictionary<Direction, Direction> OppDir = new Dictionary<Direction, Direction>() { { Direction.North, Direction.South },
-        { Direction.South, Direction.North }, { Direction.East, Direction.West }, { Direction.West, Direction.East } };
-    static private Dictionary<Direction, Direction> RightTurnDir = new Dictionary<Direction, Direction>() { { Direction.North, Direction.East },
-        { Direction.East, Direction.South }, { Direction.South, Direction.West }, { Direction.West, Direction.North } };
-    static private Dictionary<char, Direction> CharDir = new Dictionary<char, Direction> { { '^', Direction.North },
-        { '>', Direction.East }, { 'v', Direction.South}, { '<', Direction.West } };
+    static private Dictionary<Cardinal, Cardinal> OppDir = new Dictionary<Cardinal, Cardinal>() { { Cardinal.North, Cardinal.South },
+        { Cardinal.South, Cardinal.North }, { Cardinal.East, Cardinal.West }, { Cardinal.West, Cardinal.East } };
+    static private Dictionary<Cardinal, Cardinal> RightTurnDir = new Dictionary<Cardinal, Cardinal>() { { Cardinal.North, Cardinal.East },
+        { Cardinal.East, Cardinal.South }, { Cardinal.South, Cardinal.West }, { Cardinal.West, Cardinal.North } };
+    static private Dictionary<char, Cardinal> CharDir = new Dictionary<char, Cardinal> { { '^', Cardinal.North },
+        { '>', Cardinal.East }, { 'v', Cardinal.South}, { '<', Cardinal.West } };
 
-    public NodeType Type;
-    private static Direction dir = Direction.None;
+    public NodeType Type = NodeType.Path;
+    public Cardinal Direction = Cardinal.None;
 
-    private int x, y;
-    private Dictionary<Direction, Node> adjacent = new Dictionary<Direction, Node>();
+    private Cardinal startDir = Cardinal.None;
+    private Dictionary<Cardinal, Node> adjacent = new Dictionary<Cardinal, Node>();
     private bool visited = false, obstacle = false;
 
     public bool IsObstacle => Type == NodeType.Obstacle;
 
-    public Node(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    public void AddAdjacent(Direction direction, Node node)
+    public void AddAdjacent(Cardinal direction, Node node)
     {
         adjacent[direction] = node;
         node.adjacent[OppDir[direction]] = this;
     }
 
-    public void SetDirection(char c)
+    public void SetStartDir(char c)
     {
-        dir = CharDir[c];
+        Direction = CharDir[c];
+        startDir = Direction;
     }
 
     public Node? GetNext()
@@ -78,18 +69,19 @@ class Node
         var done = false;
         while (!done)
         {
-            if (!adjacent.ContainsKey(dir))
+            if (!adjacent.ContainsKey(Direction))
             {
                 done = true;
             }
-            else if (adjacent[dir].IsObstacle)
+            else if (adjacent[Direction].IsObstacle)
             {
-                dir = RightTurnDir[dir];
+                Direction = RightTurnDir[Direction];
             }
             else
             {
                 done = true;
-                next = adjacent[dir];
+                next = adjacent[Direction];
+                next.Direction = Direction;
             }
         }
         return next;
