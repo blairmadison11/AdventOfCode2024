@@ -1,5 +1,5 @@
 var stones = new StoneCollection(File.ReadAllText("input.txt").Split().Select(ulong.Parse).ToArray());
-Console.WriteLine(stones.GetCount(25));
+Console.WriteLine(stones.GetCountAfterBlinks(25));
 
 class StoneCollection
 {
@@ -11,12 +11,12 @@ class StoneCollection
         this.nums = nums;
     }
 
-    public ulong GetCount(uint iters)
+    public ulong GetCountAfterBlinks(uint iters)
     {
-        return nums.Select(x => GetCount(x, iters)).Aggregate((ulong)0, (a, c) => a + c);
+        return nums.Select(x => GetCountAfterBlinks(x, iters)).Aggregate((ulong)0, (a, c) => a + c);
     }
 
-    private ulong[] GetNums(ulong x)
+    private ulong[] GetNextBlinkNums(ulong x)
     {
         if (x == 0)
         {
@@ -37,11 +37,11 @@ class StoneCollection
         }
     }
 
-    public ulong GetCount(ulong x, uint iters)
+    private ulong GetCountAfterBlinks(ulong x, uint iters)
     {
         if (iters == 0) return 1;
         if (dict.ContainsKey((x, iters))) return dict[(x, iters)];
-        var count = GetNums(x).Select(x => GetCount(x, iters - 1)).Aggregate((ulong)0, (a, c) => a + c);
+        var count = GetNextBlinkNums(x).Select(x => GetCountAfterBlinks(x, iters - 1)).Aggregate((ulong)0, (a, c) => a + c);
         dict[(x, iters)] = count;
         return count;
     }
