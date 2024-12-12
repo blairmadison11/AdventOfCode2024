@@ -9,6 +9,8 @@ foreach (var num in nums)
 drive.Defrag();
 Console.WriteLine(drive.Checksum);
 
+
+// *** Classes ***
 class Drive
 {
     private int curPos = 0, nextFileId = 0;
@@ -54,6 +56,7 @@ class Drive
         }
     }
 }
+
 class Segment
 {
     private int pos, length, fileId;
