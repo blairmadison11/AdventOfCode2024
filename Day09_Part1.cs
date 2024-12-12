@@ -9,6 +9,8 @@ foreach (var num in nums)
 drive.Compact();
 Console.WriteLine(drive.Checksum);
 
+
+// *** Classes ***
 class Drive
 {
     private int curPos = 0, nextFileId = 0;
