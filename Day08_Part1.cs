@@ -1,4 +1,4 @@
-var nodes = File.ReadAllLines("sample.txt").Select((l, y) => l.ToCharArray().Select((c, x) => c == '.' ? new Node(x, y) : new Node(x, y, c)).ToArray()).ToArray();
+var nodes = File.ReadAllLines("input.txt").Select((l, y) => l.ToCharArray().Select((c, x) => c == '.' ? new Node(x, y) : new Node(x, y, c)).ToArray()).ToArray();
 var GridString = () => string.Join('\n', nodes.Select(r => string.Join("", r.Select(c => c.ToString()))));
 int dimX = nodes[0].Length, dimY = nodes.Length;
 foreach (var freq in Node.Frequencies)
