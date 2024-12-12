@@ -18,12 +18,11 @@ foreach (var freq in Node.Frequencies)
     var pairs = ats.SelectMany(a => ats, (a, b) => new { a, b }).Where(x => x.a != x.b);
     foreach (var pair in pairs)
     {
-        var xdiff = pair.a.X - pair.b.X;
-        var ydiff = pair.a.Y - pair.b.Y;
-        var potAns = new (int x, int y)[] { (pair.b.Y - ydiff, pair.b.X - xdiff), (pair.a.Y + ydiff, pair.a.X + xdiff) }.Where(p => p.x >= 0 && p.x < dimX && p.y >= 0 && p.y < dimY);
-        foreach (var p in potAns)
+        var x = pair.b.X - (pair.a.X - pair.b.X);
+        var y = pair.b.Y - (pair.a.Y - pair.b.Y);
+        if (x >= 0 && x < dimX && y >= 0 && y < dimY)
         {
-            nodes[p.x][p.y].AddAntinode();
+            nodes[y][x].AddAntinode();
         }
     }
 }
@@ -41,7 +40,7 @@ class Node
     public static char[] Frequencies => antennas.Keys.ToArray();
     public static List<Node> Antennas(char freq) => antennas[freq];
     public static int TotalAntinodes => anNodes.Count;
-    
+
     public int X => x;
     public int Y => y;
 
