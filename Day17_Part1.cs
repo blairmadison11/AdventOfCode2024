@@ -19,11 +19,6 @@ class AocComputer
         program = prog;
     }
 
-    public void InputProgram(int[] prog)
-    {
-        program = prog;
-    }
-
     public string Execute()
     {
         while (ip < program.Length)
