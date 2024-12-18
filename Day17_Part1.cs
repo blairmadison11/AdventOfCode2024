@@ -39,13 +39,9 @@ class AocComputer
                     break;
                 case 3:
                     if (a == 0)
-                    {
                         ip += 2;
-                    }
                     else
-                    {
                         ip = program[ip + 1];
-                    }
                     break;
                 case 4:
                     b = b ^ c;
