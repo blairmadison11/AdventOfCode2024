@@ -71,7 +71,8 @@ class AocComputer
 
     private int GetComboOperand(int operand)
     {
-        if (operand < 4) return operand;
+        if (operand < 4)
+            return operand;
         else if (operand == 4)
             return a;
         else if (operand == 5)
