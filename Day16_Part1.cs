@@ -87,10 +87,10 @@ class Path
         points = 0;
     }
 
-    public Path(Node curNode, ushort curDir, int points)
+    public Path(Node node, ushort dir, int points)
     {
-        this.curNode = curNode;
-        this.curDir = curDir;
+        this.curNode = node;
+        this.curDir = dir;
         this.points = points;
     }
 
