@@ -5,7 +5,6 @@ for (ushort i = 0; i < chars.Length; ++i)
 {
     for (ushort j = 0; j < chars[i].Length; ++j)
     {
-        
         if (chars[i][j] != '#')
         {
             var n = new Node();
@@ -19,10 +18,8 @@ for (ushort i = 0; i < chars.Length; ++i)
                 n.IsEnd = true;
             grid[i, j] = n;
         }
-        
     }
 }
-
 var pq = new PriorityQueue<Path, int>();
 pq.Enqueue(new Path(start), 0);
 int minScore = 0;
